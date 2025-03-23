@@ -22,10 +22,12 @@ describe("Login Functionality", () => {
   });
 
   it("should log in with the login form with valid credentials", () => {
+    // Match what your application is expecting - the key name should match what the app uses
     cy.intercept("POST", "**/auth/login", {
       statusCode: 200,
       body: {
-        accessToken: "fake-token",
+        // Your app is looking for 'token', not 'accessToken'
+        token: "fake-token", // Changed from accessToken to token
         name: "Test User",
         email: validCredentials.email,
       },
@@ -45,6 +47,9 @@ describe("Login Functionality", () => {
       "data-visible",
       "loggedIn",
     );
+
+    // Allow more time for localStorage to be updated
+    cy.wait(100); // Brief wait to ensure localStorage has been updated
 
     cy.window().then((win) => {
       const token = win.localStorage.getItem("token");
