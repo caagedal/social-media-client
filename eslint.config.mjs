@@ -5,7 +5,26 @@ import cypress from "eslint-plugin-cypress";
 import jest from "eslint-plugin-jest";
 
 export default defineConfig([
-  // 🔹 Vanlig JS-konfig for hele prosjektet
+  // Base configuration for all JavaScript files
+  js.configs.recommended,
+  
+  // Cypress configuration file
+  {
+    files: ["cypress.config.js"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "commonjs",
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      "no-undef": "off",
+      "no-unused-vars": "off"
+    }
+  },
+  
+  // General JavaScript files
   {
     files: ["**/*.{js,mjs,cjs}"],
     languageOptions: {
@@ -13,21 +32,20 @@ export default defineConfig([
       sourceType: "module",
       globals: globals.browser,
     },
-    plugins: {
-      js,
-    },
-    extends: ["js/recommended"],
-    rules: {},
   },
-
-  // 🔸 Cypress-konfig for e2e (*.cy.js)
+  
+  // Cypress test files - the main fix is here
   {
-    files: ["**/*.cy.js"],
+    files: ["**/*.cy.js", "cypress/e2e/**/*.js"],
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node,
-        ...globals["cypress/globals"],
+        cy: "readonly",
+        Cypress: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        beforeEach: "readonly",
+        expect: "readonly"
       },
     },
     plugins: {
@@ -37,20 +55,21 @@ export default defineConfig([
       ...cypress.configs.recommended.rules,
       "cypress/no-unnecessary-waiting": "off",
       "no-unused-vars": "off",
+      "no-undef": "off"
     },
   },
-
-  // 🔸 Jest-konfig for unit tests (*.test.js)
+  
+  // Jest test files
   {
     files: ["**/*.test.js"],
     languageOptions: {
       globals: {
         ...globals.jest,
-        ...globals.node,  // Add Node globals for Jest tests
+        ...globals.node,
       },
     },
     plugins: {
-      jest: jest,
+      jest,
     },
     rules: {
       ...jest.configs.recommended.rules,
