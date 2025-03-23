@@ -33,8 +33,8 @@ export default defineConfig([
     plugins: {
       cypress,
     },
-    extends: ["plugin:cypress/recommended"],
     rules: {
+      ...cypress.configs.recommended.rules,
       "cypress/no-unnecessary-waiting": "off",
       "no-unused-vars": "off",
     },
@@ -46,13 +46,14 @@ export default defineConfig([
     languageOptions: {
       globals: {
         ...globals.jest,
+        ...globals.node,  // Add Node globals for Jest tests
       },
     },
     plugins: {
-      jest,
+      jest: jest,
     },
-    extends: ["plugin:jest/recommended"],
     rules: {
+      ...jest.configs.recommended.rules,
       "jest/prefer-expect-assertions": "off",
     },
   },
